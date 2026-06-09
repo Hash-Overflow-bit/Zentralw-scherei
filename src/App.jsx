@@ -43,27 +43,13 @@ function App() {
               {/* Card 1: Fachwortschatz - Betriebswortschatz (connected to 'company' data list) */}
               <div className="vocab-card card-company" onClick={() => setView('company')} style={{ cursor: 'pointer' }}>
                 <span className="card-badge label-company">Fachwortschatz</span>
-                <h2 className="card-title title-company">Betriebswortschatz</h2>
-                <p className="card-desc">Wichtige Begriffe für den Alltag in der Wäscherei.</p>
-                <div className="card-footer">
-                  <span className="card-entries count-company">{basicVocabularyWords.length} Einträge</span>
-                  <a href="#company" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setView('company'); }} className="card-action-link link-company">
-                    Öffnen
-                  </a>
-                </div>
+                <h2 className="card-title title-company" style={{ marginBottom: 0 }}>Betriebswortschatz</h2>
               </div>
 
               {/* Card 2: Allgemein - Grundwortschatz (connected to 'basic' data list) */}
               <div className="vocab-card card-basic" onClick={() => setView('basic')} style={{ cursor: 'pointer' }}>
                 <span className="card-badge label-basic">Allgemein</span>
-                <h2 className="card-title title-basic">Grundwortschatz</h2>
-                <p className="card-desc">Grundlegende deutsche Wörter für den Alltag.</p>
-                <div className="card-footer">
-                  <span className="card-entries count-basic">{vocabularyWords.length} Einträge</span>
-                  <a href="#basic" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setView('basic'); }} className="card-action-link link-basic">
-                    Öffnen
-                  </a>
-                </div>
+                <h2 className="card-title title-basic" style={{ marginBottom: 0 }}>Grundwortschatz</h2>
               </div>
 
             </div>

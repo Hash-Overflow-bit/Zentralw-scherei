@@ -11,9 +11,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [nativeLanguage, setNativeLanguage] = useState('en');
   const [sortBy, setSortBy] = useState('word-asc'); // Default alphabetical sorting is cleaner for rows
-  const [showToolsMenu, setShowToolsMenu] = useState(false);
-  const [showMissingOnly, setShowMissingOnly] = useState(false);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [quizMode, setQuizMode] = useState(false);
 
   // Quiz State
@@ -21,28 +18,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
   const [quizScore, setQuizScore] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState([]);
   const [quizAnswers, setQuizAnswers] = useState([]);
-
-  // Tools menu ref for clicking outside
-  const toolsRef = useRef(null);
-
-  // New Word Form State (Simplified)
-  const [newWord, setNewWord] = useState({
-    word: '',
-    article: '',
-    translation: '',
-    category: isCompany ? 'sorting' : 'general'
-  });
-
-  // Close tools dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (toolsRef.current && !toolsRef.current.contains(event.target)) {
-        setShowToolsMenu(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   // Pre-warm SpeechSynthesis voices list
   useEffect(() => {
@@ -89,15 +64,8 @@ export default function VocabularyContainer({ vocabType, onBack }) {
   // Filter & Sort Logic
   const filteredWords = words
     .filter(item => {
-      // 1. Search Query (German word)
-      const matchesSearch = item.word.toLowerCase().includes(searchQuery.toLowerCase());
-      
-      // 2. Missing Translation Toggle
-      const translation = item.translations[nativeLanguage];
-      const hasTranslation = translation && translation.trim() !== '';
-      const matchesMissing = showMissingOnly ? !hasTranslation : true;
-
-      return matchesSearch && matchesMissing;
+      // Search Query (German word)
+      return item.word.toLowerCase().includes(searchQuery.toLowerCase());
     })
     .sort((a, b) => {
       if (sortBy === 'id-asc') {
@@ -119,37 +87,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
       }
       return 0;
     });
-
-  // Add Word Handler
-  const handleAddWord = (e) => {
-    e.preventDefault();
-    if (!newWord.word.trim()) return;
-
-    // Construct full word with optional article prefix in the listing
-    const fullWord = newWord.article ? `${newWord.article} ${newWord.word}` : newWord.word;
-    
-    const newEntry = {
-      id: String(Date.now()),
-      word: fullWord,
-      category: newWord.category,
-      emoji: '📝',
-      phonetic: '',
-      example: '',
-      translations: {
-        [nativeLanguage]: newWord.translation
-      }
-    };
-
-    setWords([newEntry, ...words]);
-    setShowAddModal(false);
-    // Reset form
-    setNewWord({
-      word: '',
-      article: '',
-      translation: '',
-      category: isCompany ? 'sorting' : 'general'
-    });
-  };
 
   // Quiz Init
   const startQuiz = () => {
@@ -193,7 +130,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
     setQuizScore(0);
     setQuizAnswers(new Array(questions.length).fill(null));
     setQuizMode(true);
-    setShowToolsMenu(false);
   };
 
   const handleAnswerClick = (choice) => {
@@ -228,7 +164,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
           </button>
           <div className="vocab-title-wrapper">
             <h2 className="vocab-title">{isCompany ? 'Betriebswortschatz' : 'Grundwortschatz'}</h2>
-            <span className="vocab-subtitle">{filteredWords.length} Begriffe angezeigt</span>
           </div>
         </div>
 
@@ -241,7 +176,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                 value={nativeLanguage} 
                 onChange={(e) => {
                   setNativeLanguage(e.target.value);
-                  setShowMissingOnly(false); // Reset missing filter when language changes
                 }}
                 className="native-select"
               >
@@ -268,66 +202,14 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             )}
           </div>
 
-          {/* Elegant Tool Button & Custom Menu */}
-          <div className="tool-menu-container" ref={toolsRef}>
-            <button 
-              className={`tool-menu-btn ${showToolsMenu ? 'active' : ''}`}
-              onClick={() => setShowToolsMenu(!showToolsMenu)}
-              title="Sortierung und Aktionen"
-            >
-              <span>Optionen</span>
-            </button>
-
-            {showToolsMenu && (
-              <div className="tool-dropdown-popup">
-                <div className="popup-section">
-                  <span className="popup-section-title">Sortierung</span>
-                  <button 
-                    className={`popup-item ${sortBy === 'id-asc' ? 'checked' : ''}`} 
-                    onClick={() => { setSortBy('id-asc'); setShowToolsMenu(false); }}
-                  >
-                    Nummer aufsteigend
-                  </button>
-                  <button 
-                    className={`popup-item ${sortBy === 'id-desc' ? 'checked' : ''}`} 
-                    onClick={() => { setSortBy('id-desc'); setShowToolsMenu(false); }}
-                  >
-                    Nummer absteigend
-                  </button>
-                  <button 
-                    className={`popup-item ${sortBy === 'word-asc' ? 'checked' : ''}`} 
-                    onClick={() => { setSortBy('word-asc'); setShowToolsMenu(false); }}
-                  >
-                    A–Z
-                  </button>
-                  <button 
-                    className={`popup-item ${sortBy === 'word-desc' ? 'checked' : ''}`} 
-                    onClick={() => { setSortBy('word-desc'); setShowToolsMenu(false); }}
-                  >
-                    Z–A
-                  </button>
-                </div>
-                
-                <div className="popup-divider"></div>
-
-                <div className="popup-section">
-                  <span className="popup-section-title">Aktionen</span>
-                  <button 
-                    className="popup-item action-item"
-                    onClick={() => { setShowAddModal(true); setShowToolsMenu(false); }}
-                  >
-                    Wort hinzufügen
-                  </button>
-                  <button 
-                    className="popup-item action-item"
-                    onClick={startQuiz}
-                  >
-                    Quiz starten
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          {/* Direct Quiz Button */}
+          <button 
+            className="tool-menu-btn"
+            onClick={startQuiz}
+            title="Quiz starten"
+          >
+            <span>Quiz</span>
+          </button>
         </div>
       </header>
 
@@ -434,24 +316,10 @@ export default function VocabularyContainer({ vocabType, onBack }) {
       ) : (
         /* MINIMALISTIC LIST OF ROWS */
         <main className="vocab-grid-main">
-          {showMissingOnly && (
-            <div className="missing-warning-banner">
-              Zeige nur Wörter, die eine Übersetzung ins <strong>{currentLangObj.nativeName} ({currentLangObj.name})</strong> benötigen.
-            </div>
-          )}
-
           {filteredWords.length === 0 ? (
             <div className="no-words-placeholder">
               <h3>Keine Begriffe gefunden</h3>
               <p>Passe die Suche oder Filter an.</p>
-              {showMissingOnly && (
-                <button 
-                  className="reset-filter-btn" 
-                  onClick={() => setShowMissingOnly(false)}
-                >
-                  Alle anzeigen
-                </button>
-              )}
             </div>
           ) : (
             <div className="words-list">
@@ -461,7 +329,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                   {currentLangObj.nativeName} ({currentLangObj.name})
                 </div>
               </div>
-              {filteredWords.map((item) => {
+              {filteredWords.map((item, index) => {
                 const translation = item.translations[nativeLanguage];
                 const hasTranslation = translation && translation.trim() !== '';
 
@@ -473,7 +341,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                       onClick={() => speakGerman(item.word)}
                       title="Aussprache anhören (de-DE)"
                     >
-                      <span className="german-text">{item.word}</span>
+                      <span className="german-text">{index + 1}) {item.word}</span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="tts-icon" style={{ marginLeft: 'auto', flexShrink: 0 }}>
                         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
@@ -505,77 +373,6 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             </div>
           )}
         </main>
-      )}
-
-      {/* 3. ADD WORD MODAL DIALOG (SIMPLIFIED) */}
-      {showAddModal && (
-        <div className="modal-overlay">
-          <div className="modal-box">
-            <div className="modal-header">
-              <h3>Neues Wort hinzufügen</h3>
-              <button className="modal-close" onClick={() => setShowAddModal(false)}>×</button>
-            </div>
-            <form onSubmit={handleAddWord} className="modal-form">
-              <div className="form-field">
-                <label htmlFor="word-german-input">Deutsches Wort <span className="req">*</span></label>
-                <div className="input-with-select">
-                  <select 
-                    value={newWord.article}
-                    onChange={(e) => setNewWord({...newWord, article: e.target.value})}
-                    className="article-select"
-                  >
-                    <option value="">(Artikel)</option>
-                    <option value="der">der</option>
-                    <option value="die">die</option>
-                    <option value="das">das</option>
-                  </select>
-                  <input 
-                    id="word-german-input"
-                    type="text" 
-                    placeholder="z.B. Waschmaschine" 
-                    value={newWord.word}
-                    onChange={(e) => setNewWord({...newWord, word: e.target.value})}
-                    required
-                    className="german-input"
-                  />
-                </div>
-              </div>
-
-              <div className="form-field">
-                <label htmlFor="word-trans-input">Übersetzung ins {currentLangObj.nativeName} ({currentLangObj.name}) <span className="req">*</span></label>
-                <input 
-                  id="word-trans-input"
-                  type="text" 
-                  placeholder={`Übersetzung eingeben...`} 
-                  value={newWord.translation}
-                  onChange={(e) => setNewWord({...newWord, translation: e.target.value})}
-                  required
-                  dir={isRTL ? 'rtl' : 'ltr'}
-                />
-              </div>
-
-              {isCompany && (
-                <div className="form-field">
-                  <label htmlFor="word-category-select">Kategorie</label>
-                  <select 
-                    id="word-category-select"
-                    value={newWord.category}
-                    onChange={(e) => setNewWord({...newWord, category: e.target.value})}
-                  >
-                    {vocabularyCategories.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.label}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-
-              <div className="modal-actions">
-                <button type="button" className="btn-cancel" onClick={() => setShowAddModal(false)}>Abbrechen</button>
-                <button type="submit" className="btn-submit">Hinzufügen</button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
     </div>
   );
