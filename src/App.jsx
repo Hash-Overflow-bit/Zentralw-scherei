@@ -63,35 +63,35 @@ function App() {
               </div>
 
             </div>
-
-            {/* Branding Footer */}
-            <footer style={{ 
-              marginTop: '48px', 
-              width: '100%', 
-              display: 'flex', 
-              justifyContent: 'center', 
-              alignItems: 'center',
-              zIndex: 10
-            }}>
-              <a 
-                href="https://www.upwork.com/freelancers/~018cb6b2be97dd2433" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                style={{
-                  color: '#94a3b8',
-                  fontSize: '13px',
-                  fontWeight: 400,
-                  textDecoration: 'none',
-                  transition: 'color 0.2s ease',
-                  letterSpacing: '0.5px'
-                }}
-                onMouseOver={(e) => e.target.style.color = '#64748b'}
-                onMouseOut={(e) => e.target.style.color = '#94a3b8'}
-              >
-                Developed by Hashir Mehboob
-              </a>
-            </footer>
           </section>
+
+          {/* Branding Footer */}
+          <footer style={{ 
+            padding: '24px 0', 
+            width: '100%', 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center',
+            zIndex: 10
+          }}>
+            <a 
+              href="https://www.upwork.com/freelancers/~018cb6b2be97dd2433" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={{
+                color: '#94a3b8',
+                fontSize: '13px',
+                fontWeight: 400,
+                textDecoration: 'none',
+                transition: 'color 0.2s ease',
+                letterSpacing: '0.5px'
+              }}
+              onMouseOver={(e) => e.target.style.color = '#64748b'}
+              onMouseOut={(e) => e.target.style.color = '#94a3b8'}
+            >
+              Developed by Hashir Mehboob
+            </a>
+          </footer>
         </main>
       ) : (
         <VocabularyContainer vocabType={view} onBack={() => setView(null)} />
