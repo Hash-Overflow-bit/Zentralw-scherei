@@ -164,6 +164,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
           </button>
           <div className="vocab-title-wrapper">
             <h2 className="vocab-title">{isCompany ? 'Vokabular ZWC' : 'Vokabular Deutsch'}</h2>
+            <span className="vocab-subtitle">{filteredWords.length} Begriffe angezeigt</span>
           </div>
         </div>
 
