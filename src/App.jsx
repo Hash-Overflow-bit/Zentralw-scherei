@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './App.css';
+import HelloGillLogo from './components/HelloGillLogo';
 import VocabularyContainer from './components/VocabularyContainer';
 import { vocabularyWords, basicVocabularyWords } from './data/laundryVocabulary';
 
@@ -13,6 +14,9 @@ function App() {
         <div className="navbar-left" style={{ cursor: 'pointer' }} onClick={() => setView(null)}>
           <h1 className="navbar-title">Zentralwäscherei</h1>
           <span className="navbar-subtitle">Chur</span>
+        </div>
+        <div className="navbar-right" style={{ cursor: 'pointer' }} onClick={() => setView(null)}>
+          <HelloGillLogo />
         </div>
       </header>
 
