@@ -24,31 +24,16 @@ function App() {
       {view === null ? (
         <main className="content-area">
           <section className="hero-section">
-            {/* Polymorphic/Watermark Background Words */}
-            <div className="watermark-container">
-              <div className="watermark word-respectful">respektvoll</div>
-              <div className="watermark word-innovative">innovativ</div>
-              <div className="watermark word-helpful">hilfsbereit</div>
-              <div className="watermark word-exemplary">vorbildlich</div>
-              <div className="watermark word-appreciation">Wertschätzung</div>
-              <div className="watermark word-teamwork">Teamwork</div>
-              <div className="watermark word-support">fördern</div>
-              <div className="watermark word-eye-level">Augenhöhe</div>
-              <div className="watermark word-sustainable">nachhaltig</div>
-            </div>
-
             {/* Cards Grid */}
             <div className="vocab-cards-grid">
               
               {/* Card 1: Fachwortschatz - Betriebswortschatz (connected to 'company' data list) */}
               <div className="vocab-card card-company" onClick={() => setView('company')} style={{ cursor: 'pointer' }}>
-                <span className="card-badge label-company">Fachwortschatz</span>
                 <h2 className="card-title title-company" style={{ marginBottom: 0 }}>Betriebswortschatz</h2>
               </div>
 
               {/* Card 2: Allgemein - Grundwortschatz (connected to 'basic' data list) */}
               <div className="vocab-card card-basic" onClick={() => setView('basic')} style={{ cursor: 'pointer' }}>
-                <span className="card-badge label-basic">Allgemein</span>
                 <h2 className="card-title title-basic" style={{ marginBottom: 0 }}>Grundwortschatz</h2>
               </div>
 

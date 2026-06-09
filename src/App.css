@@ -2,16 +2,16 @@
 
 :root {
   --bg-primary: #ffffff;
-  --bg-secondary: #f3f7fa; /* Soft blue-gray light background */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-color: #e2e8f0;
+  --bg-secondary: #ffffff; /* Pure white background */
+  --text-primary: #000000;
+  --text-secondary: #000000;
+  --text-muted: #000000;
+  --border-color: #000000;
   
-  /* Accent Colors matching the reference image */
-  --company-accent: #004e7c; /* Deep teal blue */
-  --basic-accent: #0f172a; /* Slate black */
-  --link-color: #0284c7; /* Sky blue link */
+  /* Accent Colors matching the black & white style */
+  --company-accent: #000000;
+  --basic-accent: #000000;
+  --link-color: #000000;
   
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
@@ -206,46 +206,25 @@ body {
   box-sizing: border-box;
 }
 
-/* Vocab Card - Glassmorphic / Polymorphic design */
+/* Vocab Card - Minimalist black and white design */
 .vocab-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: var(--bg-primary);
+  border: 1.5px solid var(--border-color);
   border-radius: 24px;
   padding: 40px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  box-shadow: 0 10px 30px -5px rgba(148, 163, 184, 0.1), 0 8px 12px -6px rgba(148, 163, 184, 0.04);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
-              border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
 }
 
-/* Specific Card Themes & Borders */
-.card-company {
-  border: 1.5px solid rgba(0, 78, 124, 0.12);
-}
-
-.card-basic {
-  border: 1.5px solid rgba(15, 23, 42, 0.08);
-}
-
 /* Hover Effects */
-.card-company:hover {
+.vocab-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(0, 78, 124, 0.4);
-  box-shadow: 0 20px 35px -10px rgba(0, 78, 124, 0.15), 0 10px 20px -10px rgba(0, 78, 124, 0.05);
-}
-
-.card-basic:hover {
-  transform: translateY(-6px);
-  border-color: rgba(15, 23, 42, 0.3);
-  box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.15), 0 10px 20px -10px rgba(15, 23, 42, 0.05);
 }
 
 /* Card Icon Wrappers */
@@ -1165,18 +1144,17 @@ body {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background: linear-gradient(135deg, rgba(2, 132, 199, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+  background: var(--bg-primary);
   min-height: 500px;
 }
 
 .quiz-card {
   background: var(--bg-primary);
   border-radius: 28px;
-  border: 1.5px solid rgba(2, 132, 199, 0.12);
+  border: 1.5px solid var(--border-color);
   width: 100%;
   max-width: 580px;
   padding: 40px;
-  box-shadow: 0 20px 40px -15px rgba(2, 132, 199, 0.15);
   animation: modalScale 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
@@ -1277,10 +1255,9 @@ body {
 }
 
 .quiz-choice-btn:hover:not(:disabled) {
-  border-color: var(--link-color);
-  background: rgba(2, 132, 199, 0.02);
+  border-color: var(--text-primary);
+  background: #f5f5f5;
   transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(2, 132, 199, 0.08);
 }
 
 .quiz-choice-btn.correct {
