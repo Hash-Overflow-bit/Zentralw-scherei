@@ -1,0 +1,24 @@
+{
+  "short_name": "ZW Vokabeln",
+  "name": "Zentralwäscherei Chur - Vokabeltrainer",
+  "description": "Einfacher Vokabeltrainer für Mitarbeiter der Zentralwäscherei Chur",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#ffffff",
+  "theme_color": "#FFEB00",
+  "display": "standalone",
+  "orientation": "portrait"
+}
