@@ -163,7 +163,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             Zurück
           </button>
           <div className="vocab-title-wrapper">
-            <h2 className="vocab-title">{isCompany ? 'Betriebswortschatz' : 'Grundwortschatz'}</h2>
+            <h2 className="vocab-title">{isCompany ? 'Vokabular ZWC' : 'Vokabular Deutsch'}</h2>
           </div>
         </div>
 
