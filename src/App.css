@@ -1489,11 +1489,16 @@ body {
   }
 
   .word-row {
-    padding: 14px 20px;
+    padding: 0;
   }
 
   .word-row-german {
-    font-size: 15px;
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .word-row-translation {
+    padding: 12px 16px;
   }
 
   .translation-text {
