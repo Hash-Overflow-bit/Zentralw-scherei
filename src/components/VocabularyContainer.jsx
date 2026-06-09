@@ -229,7 +229,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                   <h3 className="quiz-word-german" dir={isRTL ? 'rtl' : 'ltr'}>
                     {quizQuestions[quizIndex].nativePrompt}
                   </h3>
-                  <p className="quiz-prompt-text">Was ist die deutsche Übersetzung für diesen Begriff?</p>
+                  <p className="quiz-prompt-text">Deutsch:</p>
                 </div>
 
                 <div className="quiz-choices-grid">
@@ -341,7 +341,10 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                       onClick={() => speakGerman(item.word)}
                       title="Aussprache anhören (de-DE)"
                     >
-                      <span className="german-text">{index + 1}) {item.word}</span>
+                      <span className="german-text" style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ minWidth: '48px', display: 'inline-block', opacity: 0.6 }}>{index + 1})</span>
+                        <span>{item.word}</span>
+                      </span>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="tts-icon" style={{ marginLeft: 'auto', flexShrink: 0 }}>
                         <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                         <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
