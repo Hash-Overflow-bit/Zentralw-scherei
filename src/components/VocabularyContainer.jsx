@@ -19,6 +19,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
   const [quizScore, setQuizScore] = useState(0);
   const [quizQuestions, setQuizQuestions] = useState([]);
   const [quizAnswers, setQuizAnswers] = useState([]);
+  const [currentQuizPool, setCurrentQuizPool] = useState([]);
 
   // Pre-warm SpeechSynthesis voices list
   useEffect(() => {
@@ -99,16 +100,29 @@ export default function VocabularyContainer({ vocabType, onBack }) {
   // numQuestions: how many questions to ask
   // label: display label for the quiz header
   const startSectionQuiz = (wordPool, numQuestions, label = 'Quiz') => {
-    // We only quiz words that have a valid translation in selected native language
-    const quizPool = wordPool.filter(w => w.translations[nativeLanguage] && w.translations[nativeLanguage].trim() !== '');
-    if (quizPool.length < 2) {
+    setCurrentQuizPool(wordPool);
+    // We want to select up to 5 valid words from each 25-word chunk.
+    let selected = [];
+    const CHUNK_SIZE = 25;
+    const numChunks = Math.ceil(wordPool.length / CHUNK_SIZE);
+    
+    for (let i = 0; i < numChunks; i++) {
+       const rawChunk = wordPool.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+       const validChunk = rawChunk.filter(w => w.translations[nativeLanguage] && w.translations[nativeLanguage].trim() !== '');
+       const shuffledChunk = [...validChunk].sort(() => 0.5 - Math.random());
+       // Pick up to 5 from this chunk
+       selected = selected.concat(shuffledChunk.slice(0, 5));
+    }
+    
+    // If the wordPool didn't have enough valid words, make sure we have at least 2 questions
+    if (selected.length < 2) {
       alert(`Bitte stelle sicher, dass mindestens 2 Wörter Übersetzungen ins ${currentLangObj.nativeName} (${currentLangObj.name}) haben, bevor du das Quiz startest.`);
       return;
     }
 
-    // Shuffle and pick up to numQuestions
-    const shuffled = [...quizPool].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, Math.min(numQuestions, shuffled.length));
+    // Shuffle the combined selected questions so they aren't presented in chunk order
+    selected = selected.sort(() => 0.5 - Math.random());
+    selected = selected.slice(0, numQuestions);
 
     // Generate options for each question (Native word -> German translation choice)
     const questions = selected.map(word => {
@@ -192,7 +206,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
               >
                 {languages.map(lang => (
                   <option key={lang.code} value={lang.code}>
-                    {lang.nativeName} ({lang.name})
+                    {lang.nativeName}
                   </option>
                 ))}
               </select>
@@ -232,7 +246,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             {quizIndex < quizQuestions.length ? (
               <>
                 <div className="quiz-header">
-                  <span className="quiz-progress">{sectionQuizLabel} — Frage {quizIndex + 1} von {quizQuestions.length}</span>
+                  <span className="quiz-progress">{sectionQuizLabel}</span>
                   <button className="quiz-close-btn" onClick={() => setQuizMode(false)}>Quiz beenden</button>
                 </div>
 
@@ -276,7 +290,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                 {quizAnswers[quizIndex] !== null && (
                   <div className="quiz-feedback-container">
                     <p className={`quiz-feedback-text ${quizAnswers[quizIndex] === quizQuestions[quizIndex].correctAnswer ? 'success' : 'error'}`}>
-                      {quizAnswers[quizIndex] === quizQuestions[quizIndex].correctAnswer ? 'Richtig!' : 'Falsch. Lern weiter!'}
+                      {quizAnswers[quizIndex] === quizQuestions[quizIndex].correctAnswer ? 'Richtig!' : 'Falsch'}
                     </p>
                     <button className="quiz-next-btn" onClick={handleNextQuestion}>
                       {quizIndex + 1 === quizQuestions.length ? 'Ergebnisse anzeigen' : 'Nächste Frage →'}
@@ -295,7 +309,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                   </button>
                   <button 
                     className="quiz-nav-btn restart" 
-                    onClick={() => startSectionQuiz(words, quizQuestions.length, sectionQuizLabel)}
+                    onClick={() => startSectionQuiz(currentQuizPool, quizQuestions.length, sectionQuizLabel)}
                   >
                     Neustarten
                   </button>
@@ -304,7 +318,8 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             ) : (
               /* MINIMALISTIC RESULTS SCREEN */
               <div className="quiz-summary-box minimalistic">
-                <h2 className="summary-title">{sectionQuizLabel} — beendet</h2>
+                <div style={{ fontSize: '48px', textAlign: 'center', marginBottom: '16px' }}>🏆</div>
+                <h2 className="summary-title">Resultat</h2>
                 
                 <div className="summary-score-minimal">
                   <span className="score-main">{quizScore}</span>
@@ -312,12 +327,8 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                   <span className="score-total-min">{quizQuestions.length}</span>
                 </div>
                 
-                <p className="summary-text">
-                  Richtig beantwortete Fragen
-                </p>
-                
                 <div className="quiz-summary-actions">
-                  <button className="quiz-btn-primary" onClick={() => startSectionQuiz(words, quizQuestions.length, sectionQuizLabel)} style={{ flex: 1 }}>Quiz neustarten</button>
+                  <button className="quiz-btn-primary" onClick={() => startSectionQuiz(currentQuizPool, quizQuestions.length, sectionQuizLabel)} style={{ flex: 1 }}>Quiz neustarten</button>
                   <button className="quiz-btn-secondary" onClick={() => setQuizMode(false)} style={{ flex: 1 }}>Schliessen</button>
                 </div>
               </div>
@@ -337,7 +348,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
               <div className="words-list-header">
                 <div className="header-col-german">Deutsch</div>
                 <div className="header-col-translation">
-                  {currentLangObj.nativeName} ({currentLangObj.name})
+                  {currentLangObj.nativeName}
                 </div>
               </div>
               {(() => {
@@ -397,24 +408,15 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                     const numQuestions = milestoneNum * 5; // 5, 10, 15, ...
                     const poolEndIndex = index + 1; // words 0..index (inclusive)
                     const quizPoolWords = filteredWords.slice(0, poolEndIndex);
-                    const label = `Quiz: Wörter 1–${poolEndIndex}`;
+                    const label = `Quiz:\nWörter 1–${poolEndIndex}`;
 
                     elements.push(
                       <div key={`quiz-milestone-${index + 1}`} className="quiz-milestone-row">
                         <div className="quiz-milestone-inner">
-                          <div className="quiz-milestone-info">
-                            <span className="quiz-milestone-badge">{numQuestions} Fragen</span>
-                            <span className="quiz-milestone-label">Wörter 1–{poolEndIndex}</span>
-                          </div>
                           <button
                             className="quiz-milestone-btn"
                             onClick={() => startSectionQuiz(quizPoolWords, numQuestions, label)}
                           >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                              <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                            </svg>
                             Quiz starten
                           </button>
                         </div>

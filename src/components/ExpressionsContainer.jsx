@@ -73,7 +73,7 @@ export default function ExpressionsContainer({ onBack }) {
               >
                 {languages.map(lang => (
                   <option key={lang.code} value={lang.code}>
-                    {lang.nativeName} ({lang.name})
+                    {lang.nativeName}
                   </option>
                 ))}
               </select>
@@ -97,7 +97,7 @@ export default function ExpressionsContainer({ onBack }) {
                 <div className="words-list-header">
                   <div className="header-col-german">Deutsch</div>
                   <div className="header-col-translation">
-                    {currentLangObj.nativeName} ({currentLangObj.name})
+                    {currentLangObj.nativeName}
                   </div>
                 </div>
                 {category.items.map((item) => (

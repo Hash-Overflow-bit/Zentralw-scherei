@@ -1165,7 +1165,7 @@ body {
   margin-bottom: 30px;
 }
 
-.quiz-progress {
+.quiz-progress { white-space: pre-line;
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
