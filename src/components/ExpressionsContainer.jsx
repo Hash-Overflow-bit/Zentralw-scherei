@@ -1,7 +1,13 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { expressionsData } from '../data/expressionsData';
+import { languages } from '../data/laundryVocabulary';
 
 export default function ExpressionsContainer({ onBack }) {
+  const [nativeLanguage, setNativeLanguage] = useState('en');
+
+  // Set default language directions
+  const currentLangObj = languages.find(l => l.code === nativeLanguage) || languages[0];
+  const isRTL = currentLangObj.rtl;
 
   // Pre-warm SpeechSynthesis voices list
   useEffect(() => {
@@ -54,6 +60,26 @@ export default function ExpressionsContainer({ onBack }) {
             <span className="vocab-subtitle">{totalExpressions} Ausdrücke</span>
           </div>
         </div>
+
+        <div className="vocab-control-right">
+          {/* Native Language Dropdown */}
+          <div className="dropdown-native-lang">
+            <div className="select-container">
+              <select 
+                id="native-lang-select" 
+                value={nativeLanguage} 
+                onChange={(e) => setNativeLanguage(e.target.value)}
+                className="native-select"
+              >
+                {languages.map(lang => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.nativeName} ({lang.name})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
       </header>
 
       {/* Main Content — Expressions grouped by category */}
@@ -70,7 +96,9 @@ export default function ExpressionsContainer({ onBack }) {
               <div className="words-list expressions-list">
                 <div className="words-list-header">
                   <div className="header-col-german">Deutsch</div>
-                  <div className="header-col-translation">English</div>
+                  <div className="header-col-translation">
+                    {currentLangObj.nativeName} ({currentLangObj.name})
+                  </div>
                 </div>
                 {category.items.map((item) => (
                   <div key={item.id} className="word-row">
@@ -90,9 +118,14 @@ export default function ExpressionsContainer({ onBack }) {
                       </svg>
                     </div>
 
-                    {/* Right: English Translation */}
+                    {/* Right: Native Translation */}
                     <div className="word-row-translation">
-                      <span className="translation-text">{item.english}</span>
+                      <span 
+                        className="translation-text" 
+                        dir={isRTL ? 'rtl' : 'ltr'}
+                      >
+                        {item.translations?.[nativeLanguage] || item.english}
+                      </span>
                     </div>
                   </div>
                 ))}
