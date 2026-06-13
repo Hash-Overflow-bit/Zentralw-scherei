@@ -246,7 +246,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             {quizIndex < quizQuestions.length ? (
               <>
                 <div className="quiz-header">
-                  <span className="quiz-progress">{sectionQuizLabel}</span>
+                  <span className="quiz-progress">{sectionQuizLabel}  —  {quizIndex + 1}/{quizQuestions.length}</span>
                   <button className="quiz-close-btn" onClick={() => setQuizMode(false)}>Quiz beenden</button>
                 </div>
 
@@ -318,7 +318,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             ) : (
               /* MINIMALISTIC RESULTS SCREEN */
               <div className="quiz-summary-box minimalistic">
-                <div style={{ fontSize: '48px', textAlign: 'center', marginBottom: '16px' }}>{quizScore === quizQuestions.length ? '🏆' : '⭐'}</div>
+                {quizScore === quizQuestions.length && <div style={{ fontSize: '48px', textAlign: 'center', marginBottom: '16px' }}>🏆</div>}
                 <h2 className="summary-title">Resultat</h2>
                 
                 <div className="summary-score-minimal">
