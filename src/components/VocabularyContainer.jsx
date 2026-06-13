@@ -318,7 +318,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             ) : (
               /* MINIMALISTIC RESULTS SCREEN */
               <div className="quiz-summary-box minimalistic">
-                <div style={{ fontSize: '48px', textAlign: 'center', marginBottom: '16px' }}>🏆</div>
+                <div style={{ fontSize: '48px', textAlign: 'center', marginBottom: '16px' }}>{quizScore === quizQuestions.length ? '🏆' : '⭐'}</div>
                 <h2 className="summary-title">Resultat</h2>
                 
                 <div className="summary-score-minimal">
