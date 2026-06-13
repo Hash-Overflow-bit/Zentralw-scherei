@@ -246,7 +246,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             {quizIndex < quizQuestions.length ? (
               <>
                 <div className="quiz-header">
-                  <span className="quiz-progress">{sectionQuizLabel}{'\n'}{quizIndex + 1}/{quizQuestions.length}</span>
+                  <span className="quiz-progress">{sectionQuizLabel}{'\n'}{quizIndex + 1} / {quizQuestions.length}</span>
                   <button className="quiz-close-btn" onClick={() => setQuizMode(false)}>Quiz beenden</button>
                 </div>
 
@@ -408,7 +408,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                     const numQuestions = milestoneNum * 5; // 5, 10, 15, ...
                     const poolEndIndex = index + 1; // words 0..index (inclusive)
                     const quizPoolWords = filteredWords.slice(0, poolEndIndex);
-                    const label = `Quiz:\nWörter 1–${poolEndIndex}`;
+                    const label = `Quiz: Wörter 1–${poolEndIndex}`;
 
                     elements.push(
                       <div key={`quiz-milestone-${index + 1}`} className="quiz-milestone-row">
