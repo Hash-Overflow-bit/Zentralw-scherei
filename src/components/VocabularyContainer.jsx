@@ -246,7 +246,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             {quizIndex < quizQuestions.length ? (
               <>
                 <div className="quiz-header">
-                  <span className="quiz-progress">{sectionQuizLabel}  —  {quizIndex + 1}/{quizQuestions.length}</span>
+                  <span className="quiz-progress">{sectionQuizLabel}{'\n'}{quizIndex + 1}/{quizQuestions.length}</span>
                   <button className="quiz-close-btn" onClick={() => setQuizMode(false)}>Quiz beenden</button>
                 </div>
 
