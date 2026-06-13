@@ -2,10 +2,11 @@ import { useState } from 'react';
 import './App.css';
 import HelloGillLogo from './components/HelloGillLogo';
 import VocabularyContainer from './components/VocabularyContainer';
+import ExpressionsContainer from './components/ExpressionsContainer';
 import { vocabularyWords, basicVocabularyWords } from './data/laundryVocabulary';
 
 function App() {
-  const [view, setView] = useState(null); // null, 'company', 'basic'
+  const [view, setView] = useState(null); // null, 'company', 'basic', 'expressions'
 
   return (
     <div className="app-container">
@@ -35,6 +36,11 @@ function App() {
               {/* Card 2: Allgemein - Grundwortschatz (connected to 'basic' data list) */}
               <div className="vocab-card card-basic" onClick={() => setView('basic')} style={{ cursor: 'pointer' }}>
                 <h2 className="card-title title-basic" style={{ marginBottom: 0 }}>Vokabular Deutsch</h2>
+              </div>
+
+              {/* Card 3: Feste Ausdrücke (Fix Expressions) */}
+              <div className="vocab-card card-expressions" onClick={() => setView('expressions')} style={{ cursor: 'pointer' }}>
+                <h2 className="card-title title-expressions" style={{ marginBottom: 0 }}>Feste Ausdrücke</h2>
               </div>
 
             </div>
@@ -68,6 +74,8 @@ function App() {
             </a>
           </footer>
         </main>
+      ) : view === 'expressions' ? (
+        <ExpressionsContainer onBack={() => setView(null)} />
       ) : (
         <VocabularyContainer vocabType={view} onBack={() => setView(null)} />
       )}

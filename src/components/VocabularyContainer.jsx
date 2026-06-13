@@ -10,8 +10,9 @@ export default function VocabularyContainer({ vocabType, onBack }) {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [nativeLanguage, setNativeLanguage] = useState('en');
-  const [sortBy, setSortBy] = useState('word-asc'); // Default alphabetical sorting is cleaner for rows
+  const [sortBy, setSortBy] = useState('id-asc'); // Default ID order for quiz milestone rows
   const [quizMode, setQuizMode] = useState(false);
+  const [sectionQuizLabel, setSectionQuizLabel] = useState(''); // label for section quiz
 
   // Quiz State
   const [quizIndex, setQuizIndex] = useState(0);
@@ -88,18 +89,26 @@ export default function VocabularyContainer({ vocabType, onBack }) {
       return 0;
     });
 
-  // Quiz Init
+  // Quiz Init — general quiz (all words)
   const startQuiz = () => {
+    startSectionQuiz(words, 10, 'Quiz');
+  };
+
+  // Section Quiz — progressive quiz after every 25 words
+  // wordPool: the subset of words to quiz from
+  // numQuestions: how many questions to ask
+  // label: display label for the quiz header
+  const startSectionQuiz = (wordPool, numQuestions, label = 'Quiz') => {
     // We only quiz words that have a valid translation in selected native language
-    const quizPool = words.filter(w => w.translations[nativeLanguage] && w.translations[nativeLanguage].trim() !== '');
+    const quizPool = wordPool.filter(w => w.translations[nativeLanguage] && w.translations[nativeLanguage].trim() !== '');
     if (quizPool.length < 2) {
       alert(`Bitte stelle sicher, dass mindestens 2 Wörter Übersetzungen ins ${currentLangObj.nativeName} (${currentLangObj.name}) haben, bevor du das Quiz startest.`);
       return;
     }
 
-    // Shuffle and pick up to 10 questions
+    // Shuffle and pick up to numQuestions
     const shuffled = [...quizPool].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, Math.min(10, shuffled.length));
+    const selected = shuffled.slice(0, Math.min(numQuestions, shuffled.length));
 
     // Generate options for each question (Native word -> German translation choice)
     const questions = selected.map(word => {
@@ -125,6 +134,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
       };
     });
 
+    setSectionQuizLabel(label);
     setQuizQuestions(questions);
     setQuizIndex(0);
     setQuizScore(0);
@@ -222,7 +232,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             {quizIndex < quizQuestions.length ? (
               <>
                 <div className="quiz-header">
-                  <span className="quiz-progress">Frage {quizIndex + 1} von {quizQuestions.length}</span>
+                  <span className="quiz-progress">{sectionQuizLabel} — Frage {quizIndex + 1} von {quizQuestions.length}</span>
                   <button className="quiz-close-btn" onClick={() => setQuizMode(false)}>Quiz beenden</button>
                 </div>
 
@@ -285,7 +295,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                   </button>
                   <button 
                     className="quiz-nav-btn restart" 
-                    onClick={startQuiz}
+                    onClick={() => startSectionQuiz(words, quizQuestions.length, sectionQuizLabel)}
                   >
                     Neustarten
                   </button>
@@ -294,7 +304,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
             ) : (
               /* MINIMALISTIC RESULTS SCREEN */
               <div className="quiz-summary-box minimalistic">
-                <h2 className="summary-title">Quiz beendet</h2>
+                <h2 className="summary-title">{sectionQuizLabel} — beendet</h2>
                 
                 <div className="summary-score-minimal">
                   <span className="score-main">{quizScore}</span>
@@ -307,7 +317,7 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                 </p>
                 
                 <div className="quiz-summary-actions">
-                  <button className="quiz-btn-primary" onClick={startQuiz} style={{ flex: 1 }}>Quiz neustarten</button>
+                  <button className="quiz-btn-primary" onClick={() => startSectionQuiz(words, quizQuestions.length, sectionQuizLabel)} style={{ flex: 1 }}>Quiz neustarten</button>
                   <button className="quiz-btn-secondary" onClick={() => setQuizMode(false)} style={{ flex: 1 }}>Schliessen</button>
                 </div>
               </div>
@@ -330,50 +340,91 @@ export default function VocabularyContainer({ vocabType, onBack }) {
                   {currentLangObj.nativeName} ({currentLangObj.name})
                 </div>
               </div>
-              {filteredWords.map((item, index) => {
-                const translation = item.translations[nativeLanguage];
-                const hasTranslation = translation && translation.trim() !== '';
+              {(() => {
+                // Determine if we should show quiz milestone rows:
+                // Only when sorted by ID ascending and no active search
+                const showMilestones = sortBy === 'id-asc' && searchQuery.trim() === '';
+                const CHUNK = 25;
+                const elements = [];
 
-                return (
-                  <div key={item.id} className="word-row">
-                    {/* Left: German Word */}
-                    <div 
-                      className="word-row-german tts-clickable"
-                      onClick={() => speakGerman(item.word)}
-                      title="Aussprache anhören (de-DE)"
-                    >
-                      <span className="german-text" style={{ display: 'flex', alignItems: 'center' }}>
-                        <span style={{ minWidth: '48px', display: 'inline-block', opacity: 0.6 }}>{index + 1})</span>
-                        <span>{item.word}</span>
-                      </span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="tts-icon" style={{ marginLeft: 'auto', flexShrink: 0 }}>
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                      </svg>
-                    </div>
+                filteredWords.forEach((item, index) => {
+                  const translation = item.translations[nativeLanguage];
+                  const hasTranslation = translation && translation.trim() !== '';
 
-                    {/* Right: Native Translation */}
-                    <div className="word-row-translation">
-                      {hasTranslation ? (
-                        <span 
-                          className="translation-text" 
-                          dir={isRTL ? 'rtl' : 'ltr'}
-                        >
-                          {translation}
+                  elements.push(
+                    <div key={item.id} className="word-row">
+                      {/* Left: German Word */}
+                      <div 
+                        className="word-row-german tts-clickable"
+                        onClick={() => speakGerman(item.word)}
+                        title="Aussprache anhören (de-DE)"
+                      >
+                        <span className="german-text" style={{ display: 'flex', alignItems: 'center' }}>
+                          <span style={{ minWidth: '48px', display: 'inline-block', opacity: 0.6 }}>{index + 1})</span>
+                          <span>{item.word}</span>
                         </span>
-                      ) : (
-                        <span 
-                          className="translation-text fallback" 
-                          dir="ltr"
-                          style={{ opacity: 0.6, fontStyle: 'italic' }}
-                        >
-                          {item.translations.en || ''}
-                        </span>
-                      )}
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="tts-icon" style={{ marginLeft: 'auto', flexShrink: 0 }}>
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                      </div>
+
+                      {/* Right: Native Translation */}
+                      <div className="word-row-translation">
+                        {hasTranslation ? (
+                          <span 
+                            className="translation-text" 
+                            dir={isRTL ? 'rtl' : 'ltr'}
+                          >
+                            {translation}
+                          </span>
+                        ) : (
+                          <span 
+                            className="translation-text fallback" 
+                            dir="ltr"
+                            style={{ opacity: 0.6, fontStyle: 'italic' }}
+                          >
+                            {item.translations.en || ''}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+
+                  // Insert a quiz milestone row after every 25th word
+                  if (showMilestones && (index + 1) % CHUNK === 0) {
+                    const milestoneNum = (index + 1) / CHUNK; // 1, 2, 3, ...
+                    const numQuestions = milestoneNum * 5; // 5, 10, 15, ...
+                    const poolEndIndex = index + 1; // words 0..index (inclusive)
+                    const quizPoolWords = filteredWords.slice(0, poolEndIndex);
+                    const label = `Quiz: Wörter 1–${poolEndIndex}`;
+
+                    elements.push(
+                      <div key={`quiz-milestone-${index + 1}`} className="quiz-milestone-row">
+                        <div className="quiz-milestone-inner">
+                          <div className="quiz-milestone-info">
+                            <span className="quiz-milestone-badge">{numQuestions} Fragen</span>
+                            <span className="quiz-milestone-label">Wörter 1–{poolEndIndex}</span>
+                          </div>
+                          <button
+                            className="quiz-milestone-btn"
+                            onClick={() => startSectionQuiz(quizPoolWords, numQuestions, label)}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            Quiz starten
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+                });
+
+                return elements;
+              })()}
             </div>
           )}
         </main>

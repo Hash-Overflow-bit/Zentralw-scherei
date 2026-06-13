@@ -1585,3 +1585,183 @@ body {
   font-weight: 600;
   margin-bottom: 24px;
 }
+
+/* ==========================================================================
+   QUIZ MILESTONE ROWS (after every 25 words)
+   ========================================================================== */
+
+.quiz-milestone-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1.5px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+.quiz-milestone-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--text-primary);
+}
+
+.quiz-milestone-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 28px;
+  gap: 16px;
+}
+
+.quiz-milestone-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quiz-milestone-badge {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.quiz-milestone-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.quiz-milestone-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 10px;
+  border: 1.5px solid var(--text-primary);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.quiz-milestone-btn:hover {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.quiz-milestone-btn:active {
+  transform: translateY(0);
+}
+
+.quiz-milestone-btn svg {
+  flex-shrink: 0;
+}
+
+/* Responsive adjustments for milestone rows */
+@media (max-width: 680px) {
+  .quiz-milestone-inner {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .quiz-milestone-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+
+  .quiz-milestone-label {
+    font-size: 12px;
+  }
+
+  .quiz-milestone-btn {
+    padding: 6px 14px;
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .quiz-milestone-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+/* ==========================================================================
+   EXPRESSIONS CONTAINER & CARD STYLES
+   ========================================================================== */
+
+/* Card 3: Expressions - matching the black & white style */
+.card-expressions {
+  grid-column: 1;
+}
+
+.title-expressions {
+  color: var(--text-primary);
+}
+
+/* Expressions wrapper — groups of category blocks */
+.expressions-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Category block */
+.expression-category-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Category header */
+.expression-category-header {
+  padding: 12px 0 8px 4px;
+}
+
+.expression-category-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+/* Override words-list max-width inside expressions */
+.expressions-list {
+  max-width: 100%;
+}
+
+/* Mobile adjustments for expressions */
+@media (max-width: 680px) {
+  .expressions-wrapper {
+    gap: 28px;
+  }
+
+  .expression-category-title {
+    font-size: 16px;
+  }
+
+  .card-expressions {
+    max-width: 100%;
+  }
+}
